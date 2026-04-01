@@ -5,6 +5,7 @@
 .vscode/
 
 # Secrets & local overrides (never index)
+.cursor/mcp.json
 .env.local
 .env.development.local
 .env.production.local

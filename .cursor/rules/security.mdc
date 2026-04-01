@@ -1,0 +1,29 @@
+---
+description: "Vite env, secrets, network/collab, crypto, DOM — app + excalidraw + scripts"
+globs: "excalidraw-app/**/*.{ts,tsx},packages/excalidraw/**/*.{ts,tsx},scripts/**/*.{js,cjs,mjs},packages/excalidraw/env.cjs"
+alwaysApply: false
+---
+
+# Security (Excalidraw monorepo)
+
+## Context
+`VITE_*` / `import.meta.env` in shipped code is **public**. Collab (WS), Firebase (`excalidraw-app/data/firebase.ts`), backends (`excalidraw-app/data/index.ts`), encryption (`packages/excalidraw/data/encryption.ts`), root `.env.*` via `excalidraw-app/vite.config.mts` `envDir: "../"` and `scripts/buildPackage.js`. Applies to **agents and humans** in globs; for `examples/**` with network/secrets, same rules manually.
+
+## Scope
+`excalidraw-app/**` (env, collab, sentry), `packages/excalidraw/**` + `env.cjs`, `scripts/**`. Not `alwaysApply`: avoids noise on `docs/`, `packages/math`, etc.
+
+## Rule
+- No real keys, DB passwords, long-lived tokens, or service JSON in git; locals → `.gitignore` paths (`.env.local`, `.env.*.local`). New env vars → type in `excalidraw-app/vite-env.d.ts` and/or `packages/excalidraw/vite-env.d.ts`.
+- No server-only secrets in `VITE_*` or client bundles. Don’t put private backend fields into Firebase client config.
+- URLs: follow `excalidraw-app/data/index.ts`, `excalidraw-app/collab/`; prefer `import.meta.env` over new hardcoded prod hosts; don’t drop origin/protocol checks without task justification.
+- Don’t weaken `encryption.ts` / `ENCRYPTION_KEY_BITS` (@excalidraw/common)—AES-GCM, IV, key length. Don’t log full room keys in prod.
+- No new `dangerouslySetInnerHTML` / `innerHTML` from user or network data without strict allowlist/sanitize; no `eval` / dynamic `Function` on untrusted input (except existing isolated areas like `subset/woff2`).
+- New deps: `AGENTS.md` approval; mind postinstall/network for security-relevant libs.
+- **NEVER:** commit `.env*.local` secrets; log full tokens/passwords/keys; `fetch` from raw `location`/`document` without validation.
+
+## How to verify
+1. `test -f excalidraw-app/vite-env.d.ts && test -f packages/excalidraw/vite-env.d.ts && test -f excalidraw-app/data/firebase.ts && test -f packages/excalidraw/data/encryption.ts && test -f packages/excalidraw/env.cjs && test -f excalidraw-app/collab/Portal.tsx`
+2. Env/type edits: `yarn test:typecheck`
+3. `git diff --name-only` — no new tracked `.env.local` / `.env.*.local`; `git diff | rg -i 'api[_-]?key|secret|password|private[_-]?key|BEGIN (RSA |OPENSSH )?PRIVATE'` — no real creds
+4. New `import.meta.env.*` → matching `vite-env.d.ts` updated (step 2)
+5. Agent: re-read diff for leaked secrets in logs; URLs from env not redundant literals

@@ -12,6 +12,8 @@ Sections B and C complement [`architecture.md`](../technical/architecture.md) (h
 
 ## A. Documentation decisions (this branch)
 
+**Homework branch note:** `git log` on `day-2/brainboost721` is a short linear history (four commits as of 2026-04-02). **Recorded** hashes in items 1–9 below come from an earlier, longer history; they may not resolve with `git show` on this clone—treat the decision text and dates as authoritative unless you have the pre-squash objects.
+
 ### 1. Memory Bank structure and conventions
 
 **Decision:** All reverse-engineered documentation follows a "source-verified only" policy. Every factual assertion cites specific file paths. Anything inferred but not directly proven by code is explicitly labeled as "Inferred."
@@ -104,6 +106,16 @@ Sections B and C complement [`architecture.md`](../technical/architecture.md) (h
 
 ---
 
+### 10. Cursor agent assets: rules, skills, commands; retire `memory-bank.mdc` and `CLAUDE.md`
+
+**Decision:** Expand **`.cursor/`** for agents: add topic **`.cursor/rules/*.mdc`** (`architecture`, `conventions`, `do-not-touch`, `lower-layers`, `security`, `testing`), **`.cursor/skills/*/SKILL.md`** (including `memory-bank-update`, `build-verify`, `codebase-explore`), and **`.cursor/commands/*.md`**. Refresh root **`AGENTS.md`** as the single canonical onboarding doc. **Remove** **`.cursor/rules/memory-bank.mdc`** (previously `alwaysApply: true`) and root **`CLAUDE.md`**.
+
+**Context:** Prior Memory Bank read/update and anti-churn behavior lived in `memory-bank.mdc` (§§5 and 8). That enforcement path is gone; the **intent** — keep `docs/memory/` accurate and avoid meta-edit loops — is carried by [`.cursor/skills/memory-bank-update/SKILL.md`](../../.cursor/skills/memory-bank-update/SKILL.md) and cross-links from `AGENTS.md`.
+
+**Recorded:** 2026-04-01 (`1381548` on this branch; superseded hash `33dc3f4` on fuller histories).
+
+---
+
 ## B. Code behavior: documentation vs implementation gaps
 
 > Full details with code references: [`code-behavior-gaps.md`](../technical/code-behavior-gaps.md)
@@ -142,4 +154,4 @@ Sections B and C complement [`architecture.md`](../technical/architecture.md) (h
 - [`implicit-invariants.md`](../technical/implicit-invariants.md) — full Section C entries.
 - [`systemPatterns.md`](./systemPatterns.md) — monorepo and composition patterns at a glance.
 
-_Last updated: 2026-03-30 — Section A §9 (`06d3176`, `packages/utils` layering); §§6–8 and B/C split `34efb2b`; Cursor rule `649e956`._
+_Last updated: 2026-04-02 — Section A §10 aligned to HEAD `1381548` (Cursor agent layout); older § Recorded hashes may not exist after history squash (see branch note under §A)._

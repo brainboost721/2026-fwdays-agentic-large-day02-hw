@@ -1,0 +1,48 @@
+---
+description: "Architecture constraints: state, rendering, package deps — for all internal packages"
+globs: "packages/**/*.ts,packages/**/*.tsx"
+alwaysApply: false
+---
+
+# Excalidraw Architecture
+
+## Context
+Monorepo: `common → math → element → excalidraw` + `utils` (standalone) + `excalidraw-app/` (hosted app). Custom action-based state and Canvas 2D rendering — no external state managers, no DOM-based drawing libs.
+
+## Scope
+`packages/**/*.{ts,tsx}` — all TS sources across packages, because dependency-order and import-direction rules span every package, not just `excalidraw`.
+
+## Rule
+
+### State
+- ALL state updates via `actionManager` (`packages/excalidraw/actions/manager.tsx`) — NEVER mutate `AppState` directly
+- Canonical type: `AppState` in `packages/excalidraw/types.ts`
+- NEVER add Redux / Zustand / MobX
+- Jotai atoms: UI signals only (e.g. `isOfflineAtom`), NOT a state-management replacement
+
+### Rendering
+- Canvas 2D on `HTMLCanvasElement` — NOT React DOM
+- Path: `Scene` → `Renderer.getRenderableElements()` → `renderStaticScene()` / `renderInteractiveScene()` → canvas context
+- Key files: `scene/Renderer.ts`, `renderer/staticScene.ts`, `renderer/interactiveScene.ts`
+- NEVER add react-konva / fabric.js / pixi.js
+- NEVER bypass viewport culling (`Renderer.getRenderableElements`)
+
+### Package dependency order (no cycles)
+    common → math → element → excalidraw
+- NEVER import `@excalidraw/excalidraw` from `element`, `math`, or `common`
+- `utils` may import from `excalidraw` (embedder helper)
+
+### Dependencies
+- No new npm packages without approval
+- Check `packages/utils/` and `packages/common/` first
+
+### Collaboration boundary
+- Collab (rooms, sockets, Firebase) lives in `excalidraw-app/collab/` — NEVER in `packages/excalidraw/`
+
+## How to verify
+**Agent:** repo root. For `rg`, **PASS = zero lines on stdout** (ignore exit code). For `test`, **PASS = exit 0**.
+
+1. `rg "from ['\"](?:redux|zustand|mobx|@reduxjs|react-konva|fabric|pixi)" packages/ -g "*.{ts,tsx}"` → PASS: empty stdout
+2. `rg "from ['\"]@excalidraw/excalidraw" packages/element/ packages/math/ packages/common/ -g "*.{ts,tsx}"` → PASS: empty stdout
+3. `test -f packages/excalidraw/actions/manager.tsx && test -f packages/excalidraw/scene/Renderer.ts && test -f packages/excalidraw/types.ts` → PASS: exit 0
+4. If `git diff --name-only HEAD~1 | rg -q package.json` succeeds → re-check **Dependencies** rule on that diff before merge; else skip
