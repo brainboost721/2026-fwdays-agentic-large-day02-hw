@@ -2,7 +2,7 @@
 
 ## Last updated
 
-2026-04-02 — branch `day-2/brainboost721`, HEAD `1381548`. Uncommitted: `docs/memory/activeContext.md`, `decisionLog.md`, `progress.md` (this Memory Bank sync).
+2026-04-02 — branch `day-2/brainboost721`. After Memory Bank sync: see `git status` for dirty paths.
 
 ## Overall status
 
@@ -43,10 +43,16 @@ Homework branch **`day-2/brainboost721`**: Excalidraw **app and package source**
 | `code-behavior-gaps.md` | Section B detail — doc vs implementation         |
 | `implicit-invariants.md` | Section C detail — invariants, hazards, comments |
 
+### Day 2 homework artifacts (`docs/`)
+
+| File               | Description |
+| ------------------ | ----------- |
+| `ab-validation.md` | A/B validation of `.cursor/rules/security.mdc` (prompt, scorecard, rule OFF vs ON, conclusion). CodeRabbit reviews it via `.coderabbit.yaml` (`path: docs/ab-validation.md`). |
+
 ### Agent guidance (repo root and `.cursor/`)
 
 - `AGENTS.md` — canonical AI-agent onboarding: overview, stack, layout, commands, architecture summary, conventions, do-not-touch table, constraints; links into `docs/memory/`.
-- `.cursor/rules/*.mdc` — topic rules: `architecture`, `conventions`, `do-not-touch`, `lower-layers`, `security`, `testing` (no longer a single always-apply `memory-bank.mdc`; see `decisionLog.md` §10).
+- `.cursor/rules/*.mdc` — topic rules: `architecture`, `conventions`, `do-not-touch`, `lower-layers`, `security`, `testing` (no longer a single always-apply `memory-bank.mdc`; see `decisionLog.md` §10). **`security.mdc`** includes explicit new-`fetch` URL validation (`new URL()`, protocol `https:` / `http:` in dev only) and a broader NEVER clause for unvalidated `fetch` targets — see `decisionLog.md` §11.
 - `.cursor/skills/*/SKILL.md` — repeatable workflows (`build-verify`, `codebase-explore`, `memory-bank-update`, `repomix-reference`).
 - `.cursor/commands/*.md` — command templates (e.g. `create-component`, `review-code`).
 

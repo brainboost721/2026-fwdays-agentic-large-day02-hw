@@ -2,11 +2,11 @@
 
 ## Last updated
 
-2026-04-02 — branch `day-2/brainboost721`. HEAD `1381548`. **Dirty:** Memory Bank sync touches `docs/memory/activeContext.md`, `decisionLog.md`, `progress.md` until committed.
+2026-04-02 — branch `day-2/brainboost721`. Day 2: `docs/ab-validation.md` records A/B validation of `.cursor/rules/security.mdc` (see `decisionLog.md` §11). `git status` for dirty paths.
 
 ## Current focus
 
-- **Day 2** homework on `day-2/brainboost721`. Excalidraw app/library source unchanged; work focuses on **documentation, Cursor rules, agent guidance, and repomix tooling**.
+- **Day 2** homework on `day-2/brainboost721`. Excalidraw app/library source unchanged; work focuses on **documentation, Cursor rules, agent guidance, and repomix tooling**. Deliverable: [`docs/ab-validation.md`](../ab-validation.md) (A/B test write-up for `security.mdc`).
 - **`AGENTS.md`** at repo root — canonical agent onboarding: overview, stack, structure, commands, architecture (dual state, canvas, ActionManager), conventions, do-not-touch table, and links to Memory Bank ([`techContext.md`](./techContext.md), [`systemPatterns.md`](./systemPatterns.md)). Detailed conventions and guardrails also live in **`.cursor/rules/*.mdc`** (architecture, conventions, do-not-touch, lower-layers, security, testing). **`.cursor/skills/`** holds repeatable workflows (`build-verify`, `codebase-explore`, `memory-bank-update`, `repomix-reference`); **`.cursor/commands/`** holds slash-style command templates (`create-component`, `review-code`). Root **`CLAUDE.md`** and **`.cursor/rules/memory-bank.mdc`** were removed when agent assets were consolidated (commit `1381548` on this branch).
 - The Memory Bank (`docs/memory/`) is the working context for agents; product and technical docs live in [`docs/product/`](../product/) and [`docs/technical/`](../technical/).
 - Use [`decisionLog.md`](./decisionLog.md) for documentation decisions, doc-vs-code gaps (Section B), and refactor hazards (Section C). Full B/C detail: [`code-behavior-gaps.md`](../technical/code-behavior-gaps.md), [`implicit-invariants.md`](../technical/implicit-invariants.md).

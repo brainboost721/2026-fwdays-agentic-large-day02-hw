@@ -116,6 +116,16 @@ Sections B and C complement [`architecture.md`](../technical/architecture.md) (h
 
 ---
 
+### 11. Security rule: actionable URL validation for new `fetch` endpoints
+
+**Decision:** Extend [`.cursor/rules/security.mdc`](../../.cursor/rules/security.mdc) with an explicit requirement that **new fetch endpoints** validate URLs using `new URL()` and protocol checks (`https:` in production; `http:` allowed in dev only), and broaden the **NEVER** clause so `fetch` to **any** URL without protocol/origin validation is disallowed (not only URLs derived from raw `location` / `document`).
+
+**Context:** Makes agent-facing security guidance actionable; methodology and scored outcomes are recorded in [`docs/ab-validation.md`](../ab-validation.md).
+
+**Recorded:** 2026-04-02.
+
+---
+
 ## B. Code behavior: documentation vs implementation gaps
 
 > Full details with code references: [`code-behavior-gaps.md`](../technical/code-behavior-gaps.md)
