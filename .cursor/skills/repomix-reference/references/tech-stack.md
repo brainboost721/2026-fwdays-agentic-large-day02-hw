@@ -3,10 +3,12 @@
 ## Languages
 
 - Node.js
+- TypeScript
 
 ## Frameworks
 
-- TypeScript
+- React
+- Vite
 
 ## Package Manager
 

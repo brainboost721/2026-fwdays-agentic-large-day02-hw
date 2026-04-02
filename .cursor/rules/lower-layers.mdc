@@ -1,16 +1,16 @@
 ---
-description: "common/math/element: no React in lib src; math=no @excalidraw/excalidraw; common/element=type-only from editor"
-globs: "packages/common/**/*.{ts,tsx},packages/math/**/*.{ts,tsx},packages/element/**/*.{ts,tsx}"
+description: "common/math/element: no React in lib src + package-root *.ts/tsx; math=no @excalidraw/excalidraw; common/element=type-only from editor"
+globs: "packages/{common,math,element}/src/**/*.{ts,tsx},packages/{common,math,element}/*.{ts,tsx}"
 alwaysApply: false
 ---
 
 # Lower packages (common, math, element)
 
 ## Context
-Scoped to these three packages (`AGENTS.md` order: `common → math → element → excalidraw`). Excludes `excalidraw-app`, `packages/excalidraw`, `packages/utils` (see `architecture.mdc`). Library `src/` is React-free; tests may use React like existing `packages/common/tests/url.test.tsx`. `common/src` + `element/src`: `import type` from `@excalidraw/excalidraw/types`, `.../scene/types`, `.../components/App` is OK; `math/src`: zero `@excalidraw/excalidraw`. `common/src` already `import type` from `@excalidraw/element/types`—no value imports from `@excalidraw/element` in lib code. Else: `conventions.mdc`, `testing.mdc`.
+Scoped to these three packages (`AGENTS.md` order: `common → math → element → excalidraw`). Excludes `excalidraw-app`, `packages/excalidraw`, `packages/utils` (see `architecture.mdc`). Library code in `src/**` and package-root `*.{ts,tsx}` (see globs) is React-free; tests may use React like existing `packages/common/tests/url.test.tsx`. `common/src` + `element/src`: `import type` from `@excalidraw/excalidraw/types`, `.../scene/types`, `.../components/App` is OK; `math/src`: zero `@excalidraw/excalidraw`. `common/src` already `import type` from `@excalidraw/element/types`—no value imports from `@excalidraw/element` in lib code. Else: `conventions.mdc`, `testing.mdc`.
 
 ## Rule
-- **No** `react` / `react-dom` / `jotai` in `packages/{common,math,element}/src/**` or other non-test lib files (e.g. `packages/common/debug.ts`).
+- **No** `react` / `react-dom` / `jotai` in `packages/{common,math,element}/src/**` or `packages/{common,math,element}/*.{ts,tsx}` (package-root lib files such as `packages/common/debug.ts`; excludes `tests/` and `__tests__/`).
 - **No** editor/product UI logic (`window`/`document`/canvas shell) here → `packages/excalidraw` or `excalidraw-app/`.
 - **`math/src`:** **never** import `@excalidraw/excalidraw` (any kind). Only `@excalidraw/common`, `@excalidraw/math`, relative.
 - **`common/src` + `element/src`:** `@excalidraw/excalidraw` = **type-only** (`import type`, `import { type … }`, paths above). **No** value imports in lib `src/` → use `tests/`, `__tests__/`, `*.test.*` for integration imports.
@@ -21,7 +21,8 @@ Scoped to these three packages (`AGENTS.md` order: `common → math → element 
 
 1. `test -f packages/common/src/index.ts && test -f packages/math/src/index.ts && test -f packages/element/src/index.ts`
 2. `rg "from ['\"]@excalidraw/excalidraw" packages/math/src -g "*.{ts,tsx}"`
-3. `rg "from ['\"](?:react|react-dom|jotai)" packages/common/src packages/math/src packages/element/src -g "*.{ts,tsx}"`
-4. Optional (PCRE2 `rg`): `rg --pcre2 '^import (?!type\\b)' packages/common/src packages/element/src -g "*.{ts,tsx}" | rg '@excalidraw/excalidraw' || true`
+3. `rg "from ['\"](?:react|react-dom|jotai)" packages/common packages/math packages/element -g "*.{ts,tsx}" -g "!**/tests/**" -g "!**/__tests__/**"`
+4. Optional (PCRE2 `rg`): `rg --pcre2 '^\\s*import(?!\\s+type\\b)(?!\\s+\\{[^}]*\\btype\\b[^}]*\\})' packages/common packages/element -g "*.{ts,tsx}" -g "!**/tests/**" -g "!**/__tests__/**" -g '!**/global.d.ts' | rg '@excalidraw/excalidraw' || true` (skip `global.d.ts`: side-effect string imports for ambient types)
 5. `git diff --name-only` + diff review: no new non-`type` `@excalidraw/excalidraw` imports outside tests.
 6. Substantive edits: `yarn test:typecheck && yarn test:code`
+7. `rg -n -P '\b(window|document)\b|createElement\(["\x27]canvas["\x27]\)|HTMLCanvasElement' packages/common/src packages/math/src packages/element/src -g "*.{ts,tsx}" -g "!**/tests/**" -g "!**/__tests__/**"` → PASS: empty stdout (or explicitly documented allowlist/exception in this rule)

@@ -28,29 +28,49 @@ Use this skill when you need to:
 
 ### 1. Find file locations
 
-Check `project-structure.md` for the directory tree:
+Check `project-structure.md` for the directory tree (this repo is the Excalidraw monorepo: editor in `packages/excalidraw/`, shared geometry in `packages/element/`, host app in `excalidraw-app/`):
 
-```
-src/
-  index.ts (42 lines)
-  utils/
-    helpers.ts (128 lines)
+```text
+packages/excalidraw/
+  components/
+    App.tsx
+  scene/
+    Renderer.ts
+  renderer/
+    staticScene.ts
+packages/element/
+  src/
+    binding.ts
 ```
 
 ### 2. Read file contents
 
-Grep in `files.md` for the file path:
+Grep in `files.md` for the file path (match the `## File:` header):
 
+```text
+## File: packages/excalidraw/components/App.tsx
 ```
-## File: src/utils/helpers.ts
+
+Another common jump point for arrow/connector behavior:
+
+```text
+## File: packages/element/src/binding.ts
 ```
 
 ### 3. Search for code
 
-Grep in `files.md` for keywords:
+Grep in `files.md` for symbols or phrases that appear in source (examples below are real names in this tree):
 
+```text
+class App extends React.Component
 ```
-function calculateTotal
+
+```text
+bindBindingElement
+```
+
+```text
+renderStaticSceneThrottled
 ```
 
 ## Common Use Cases
